@@ -1,1 +1,3 @@
-11:44:40.256 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Comparison has been completed
+19:32:08.110 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Values updated in the ENV file
+19:32:09.193 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Converted CSV into Excel
+19:32:09.194 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Comparison has been completed

@@ -32,7 +32,8 @@ public class ExcelcsvComp extends csvUtils{
 		structureCheck(GeneralUtils.getEnvironment("inputExcelTemplate"),2);		
 		log.info("Validated the Structure of table for "+GeneralUtils.getEnvironment("inputExcelTemplate") );
 		//Compare Actual and Baseline CSV and Generates a 3rd CSV 
-		csvComparison();
+		System.out.println("===================="+missingColm);
+		csvComparison(missingValuesMap);
 		log.info("Compared the ACtual and Baseline CSV and Generates 3rd CSV");
 		//Converts Back the CSV to Excel
 		long endTime   = System.currentTimeMillis();
