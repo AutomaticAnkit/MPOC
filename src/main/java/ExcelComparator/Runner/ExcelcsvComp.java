@@ -28,9 +28,12 @@ public class ExcelcsvComp extends csvUtils{
 	public static void main(String[] args) throws Exception  {
 		log.info("Comparison between " + GeneralUtils.getEnvironment("inputExcelFileName")+".xlsx"+" & "+ GeneralUtils.getEnvironment("inputExcelTemplate")+".xlsx has been iniated.");
 		System.out.println("Comparison between "+ GeneralUtils.getEnvironment("inputExcelFileName")+".xlsx"+" & "+ GeneralUtils.getEnvironment("inputExcelTemplate")+".xlsx has been iniated.");
+		//matchStructure(GeneralUtils.getEnvironment("inputExcelFileName"), 1);
+		//matchStructure(GeneralUtils.getEnvironment("inputExcelTemplate"), 2);
 		structureCheck(GeneralUtils.getEnvironment("inputExcelFileName"),1);
 		log.info("Validated the Structure of the table for "+GeneralUtils.getEnvironment("inputExcelFileName") );
 		finalData = new StringBuffer();
+		
 		structureCheck(GeneralUtils.getEnvironment("inputExcelTemplate"),2);		
 		log.info("Validated the Structure of table for "+GeneralUtils.getEnvironment("inputExcelTemplate") );
 		//Compare Actual and Baseline CSV and Generates a 3rd CSV 

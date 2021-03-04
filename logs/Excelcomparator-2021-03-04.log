@@ -1,5 +1,5 @@
-12:04:36.927 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Converted CSV into Excel
-12:04:36.947 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Comparison has been completed
-12:08:19.511 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Comparison between ProdData.xlsx & Template.xlsx has been iniated.
-12:08:20.971 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Validated the Structure of the table for ProdData
-12:08:21.556 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Validated the Structure of table for Template
+21:14:31.283 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Validated the Structure of the table for ProdData
+21:14:32.297 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Validated the Structure of table for Template
+21:14:32.629 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Compared the ACtual and Baseline CSV and Generates 3rd CSV
+21:14:32.631 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Values updated in the ENV file
+21:14:33.330 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Converted CSV into Excel

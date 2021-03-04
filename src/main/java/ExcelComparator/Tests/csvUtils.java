@@ -61,6 +61,7 @@ public class csvUtils {
 	static XSSFCellStyle headerstyle;
 	static XSSFCellStyle style;
 	static XSSFFont fontstyle;
+	static missingValueExtractor missingValue;
 
 	public csvUtils() throws IOException {
 
@@ -91,6 +92,30 @@ public class csvUtils {
 		}
 		return result;
 	}
+	
+	public static void matchStructure(String fileName, int fileNo) throws Exception, IOException
+	{
+		int totnumoftables = Integer.parseInt(GeneralUtils.getProperty("totalTables"));
+		for (int i = 1; i <= totnumoftables; i++) {
+			// fColumn array is getting Prod and template value and getting split.
+			String[] fColumn = (GeneralUtils.getProperty("firstColumnHeaderTable" + i)).split(",");
+			String[] lColumn = (GeneralUtils.getProperty("LastColumnHeaderTable" + i)).split(",");
+			String[] rowCount = (GeneralUtils.getProperty("noOfRowsInTable" + i)).split(",");
+			String[] colCount = (GeneralUtils.getProperty("noOfColumnsInTable" + i)).split(",");
+			// File no is 1 for prod and 2 for template
+			for (int tbCount = 1; tbCount <= totnumoftables; tbCount++) {
+			if (fileNo == 1) {
+				// Below Method generates on the basis of first column header and Last column
+				// heade
+				 missingValue.headerCompare(fileName, Integer.parseInt(colCount[0]), fColumn[0], lColumn[0], tbCount);
+				
+			} else {
+				missingValue.headerCompare(fileName, Integer.parseInt(colCount[1]), fColumn[1], lColumn[1], tbCount);
+			}
+			System.out.println("missingValuesMap.put(tableNo, tempData.indexOf(tempColHeader));: " + missingValuesMap );
+			}
+		}
+	}
 
 	// This method is used for checking the structure of the table.
 	public static void structureCheck(String fileName, int fileNo) throws IOException {
@@ -120,7 +145,7 @@ public class csvUtils {
 	// header , No of column and no of rows.
 	public static void masterCSVGenrator(String fileName, String fh, String lh, int nc, int nr, int tableNo)
 			throws IOException {
-		missingValueExtractor missingValue = new missingValueExtractor();
+		missingValue = new missingValueExtractor();
 		String inputExcelFileName = fileName;
 		missingColm = missingValue.headerCompare(fileName, nc, fh, lh, tableNo);
 		localmissingColm = missingValue.headerCompare(fileName, nc, fh, lh, tableNo);

@@ -156,7 +156,7 @@ public class missingValueExtractor extends csvUtils {
 				tempColHeader.removeAll(prodColHeaderT5);
 			}			
 			missingValuesMap.put(tableNo, tempDataList);
-			System.out.println("missingValuesMap.put(tableNo, tempData.indexOf(tempColHeader));: " + missingValuesMap );
+			System.out.println("missingValuesMap : " + missingValuesMap);
 		}
 		return tempColHeader;
 	}
