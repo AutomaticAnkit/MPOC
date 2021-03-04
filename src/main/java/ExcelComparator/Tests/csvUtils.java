@@ -337,9 +337,14 @@ public class csvUtils {
 		boolean tableFlag = false;
 		double var = 0;
 		// Looping on the first list
+		System.out.println("al1 list "+al1);
+		int testing = 0;
+		int x = 1;
 		for (int i = 0; i < al1.size();) {
 			// Looping on the number of tables
-			for (int x = 1; x <= noOfTables;) {
+			System.out.println("noOfTables: " + noOfTables);
+			while(x <= noOfTables) {
+				System.out.println("noOfTablesxxxxxx: " + x);
 				// tempcount get the column count on the basis of table
 				int tempColCount = tablecolumnCount(x, 1);
 				// Y is the temp variable to add into column count on line no 374
@@ -356,6 +361,7 @@ public class csvUtils {
 						k++;
 						i++;
 					}
+					testing = tempColCount;
 				}
 				// This is to compare the elements of table apart from Table Headers
 				else if (al1.get(i).equals(al2.get(i))) {
@@ -367,7 +373,10 @@ public class csvUtils {
 				} else {
 					// Variance Calculater is used to return the variance value as per the column of
 					// the table
-					var = varianceCalculator(tempColCount, i, x, missingValuesMap);
+					
+					//int ab = i%tempColCount;
+					var = varianceCalculator(tempColCount, testing, x, missingValuesMap);
+					testing++;
 					// Comparison is done with the tolerance value on the Yes flag
 					if (GeneralUtils.getEnvironment("runWithTol").equalsIgnoreCase("Yes")) {
 						double itemList1 = Double.parseDouble((String) al1.get(i));
@@ -390,8 +399,11 @@ public class csvUtils {
 				if (i < al1.size() && x < noOfTables) {
 					if (al1.get(i)
 							.equals(splitValue(GeneralUtils.getProperty("firstColumnHeaderTable" + (x + 1)), 1))) {
-						writer.append("\n");
+						System.out.println("Am I coming here or not");
 						x++;
+						System.out.println("Am I coming here or not x : " + x);
+						writer.append("\n");
+						
 					}
 				} else {
 					break;
@@ -710,11 +722,13 @@ public class csvUtils {
 	private static double varianceCalculator(int tableColumnCount, int iloop, int tableNumber,
 			HashMap<Integer, ArrayList> missingValuesMap) throws IOException {
 		// Variance variable to return the variance as per the column
+		System.out.println("i value in variance method"+iloop);
 		double VarianceCol1 = 0;
 		double VarianceCol2 = 0;
 		double VarianceCol3 = 0;
 		double VarianceCol4 = 0;
 		double VarianceCol5 = 0;
+		System.out.println("tableNumber: " + tableNumber);
 		// switch based on the no of table column count
 		switch (tableColumnCount) {
 		case 1:
@@ -787,6 +801,8 @@ public class csvUtils {
 			break;
 
 		case 2:
+			System.out.println("VarianceCol1: " + VarianceCol1);
+			System.out.println("VarianceCol2: " + VarianceCol2);
 			if (iloop % tableColumnCount == 0) {
 				variance = VarianceCol1;
 			} else if (iloop % tableColumnCount == 1) {
