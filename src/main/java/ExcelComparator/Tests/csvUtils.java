@@ -295,7 +295,6 @@ public class csvUtils {
 		String file2 = GeneralUtils.getEnvironment("inputExcelTemplate") + "CSV" + end + ".csv";
 		String file3 = GeneralUtils.getEnvironment("inputExcelFileName")
 				+ GeneralUtils.getEnvironment("inputExcelTemplate") + ".csv";
-		System.out.println("@@@@" + path);
 		ArrayList al1 = new ArrayList();
 		ArrayList al2 = new ArrayList();
 		// Counter to get all the Pass Values
@@ -692,13 +691,13 @@ public class csvUtils {
 		System.out.println("itemList2"+itemList2);
 		System.out.println("var"+var);
 		if (itemList1 < itemList2) {
-			if (itemList1 + var == itemList2) {
+			if (itemList2-itemList1 <=var ) {
 				result = "Pass with Variance: " + var;
 			} else {
 				result = "Fail";
 			}
 		} else {
-			if (itemList1 - var == itemList2) {
+			if (itemList1 - var <= itemList2) {
 				result = "Pass with Variance: " + var;
 			} else {
 				result = "Fail";
