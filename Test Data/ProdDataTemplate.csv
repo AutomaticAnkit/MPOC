@@ -1,0 +1,5 @@
+A1,A2,A3,A4,A5,Pass with Variance: 1.0,Pass with Variance: 2.0,Pass with Variance: 3.0,Pass with Variance: 4.0,Pass with Variance: 5.0,Pass with Variance: 1.0,Fail,Pass,Pass,Pass,Fail,Fail,Fail,Fail,Fail,
+B1,B2,Pass with Variance: 2.0,Pass with Variance: 4.0,Pass with Variance: 2.0,Pass,
+C1,C2,C3,Pass with Variance: 3.0,Pass with Variance: 5.0,Pass with Variance: 7.0,Fail,Pass with Variance: 5.0,Pass with Variance: 7.0,
+D1,D2,D3,D4,Pass with Variance: 10.0,Pass with Variance: 20.0,Pass with Variance: 30.0,Pass with Variance: 40.0,Pass with Variance: 10.0,Pass with Variance: 20.0,Pass with Variance: 30.0,Fail,Fail,Fail,Fail,Fail,
+E1,Pass with Variance: 3.0,Pass with Variance: 3.0,Fail,Pass,
