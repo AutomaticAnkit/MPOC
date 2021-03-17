@@ -1,1 +1,4 @@
-21:14:33.330 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Comparison has been completed
+14:07:21.140 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Compared the ACtual and Baseline CSV and Generates 3rd CSV
+14:07:21.176 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Values updated in the ENV file
+14:07:21.715 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Converted CSV into Excel
+14:07:21.716 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Comparison has been completed

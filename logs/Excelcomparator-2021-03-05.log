@@ -1,0 +1,5 @@
+13:23:40.382 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Comparison has been completed
+13:24:04.483 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Comparison between ProdData.xlsx & Template.xlsx has been iniated.
+13:24:06.595 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Validated the Structure of the table for ProdData
+13:24:07.561 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Validated the Structure of table for Template
+13:24:07.881 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Compared the ACtual and Baseline CSV and Generates 3rd CSV

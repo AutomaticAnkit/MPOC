@@ -54,6 +54,7 @@ public class csvUtils {
 	protected static ArrayList missingColm = new ArrayList();
 	static ArrayList localmissingColm = new ArrayList();
 	protected static HashMap<Integer, ArrayList> missingValuesMap = new HashMap<Integer, ArrayList>();
+	protected static HashMap<Integer, ArrayList> completeValuesMap = new HashMap<Integer, ArrayList>();
 	static String end = getDate() + "_" + getTime();
 	static XSSFCellStyle failstyle;
 	static XSSFCellStyle passWithVstyle;
@@ -92,27 +93,29 @@ public class csvUtils {
 		}
 		return result;
 	}
-	
-	public static void matchStructure(String fileName, int fileNo) throws Exception, IOException
-	{
+
+	public static void matchStructure(String fileName, int fileNo) throws Exception, IOException {
 		int totnumoftables = Integer.parseInt(GeneralUtils.getProperty("totalTables"));
 		for (int i = 1; i <= totnumoftables; i++) {
 			// fColumn array is getting Prod and template value and getting split.
 			String[] fColumn = (GeneralUtils.getProperty("firstColumnHeaderTable" + i)).split(",");
 			String[] lColumn = (GeneralUtils.getProperty("LastColumnHeaderTable" + i)).split(",");
-			String[] rowCount = (GeneralUtils.getProperty("noOfRowsInTable" + i)).split(",");
+//			String[] rowCount = (GeneralUtils.getProperty("noOfRowsInTable" + i)).split(",");
 			String[] colCount = (GeneralUtils.getProperty("noOfColumnsInTable" + i)).split(",");
 			// File no is 1 for prod and 2 for template
 			for (int tbCount = 1; tbCount <= totnumoftables; tbCount++) {
-			if (fileNo == 1) {
-				// Below Method generates on the basis of first column header and Last column
-				// heade
-				 missingValue.headerCompare(fileName, Integer.parseInt(colCount[0]), fColumn[0], lColumn[0], tbCount);
-				
-			} else {
-				missingValue.headerCompare(fileName, Integer.parseInt(colCount[1]), fColumn[1], lColumn[1], tbCount);
-			}
-			System.out.println("missingValuesMap.put(tableNo, tempData.indexOf(tempColHeader));: " + missingValuesMap );
+				if (fileNo == 1) {
+					// Below Method generates on the basis of first column header and Last column
+					// heade
+					missingValue.headerCompare(fileName, Integer.parseInt(colCount[0]), fColumn[0], lColumn[0],
+							tbCount);
+
+				} else {
+					missingValue.headerCompare(fileName, Integer.parseInt(colCount[1]), fColumn[1], lColumn[1],
+							tbCount);
+				}
+				System.out.println(
+						"missingValuesMap.put(tableNo, tempData.indexOf(tempColHeader));: " + missingValuesMap);
 			}
 		}
 	}
@@ -152,7 +155,7 @@ public class csvUtils {
 		System.out.println("missingColm : " + missingColm);
 		// String buffer table 1 gets the values of table appended by ","
 		StringBuffer table1 = tabletoStringGenrator(fileName, fh, lh, nc, nr, localmissingColm);
-		//missingValuesMap.put(tableNo, missingColm);
+		// missingValuesMap.put(tableNo, missingColm);
 		System.out.println("missingValuesMap" + missingValuesMap);
 		System.out.println("PFB, the table data from table.");
 		System.out.println(table1 + "\n");
@@ -180,10 +183,12 @@ public class csvUtils {
 				GeneralUtils.getEnvironment("folderPathforInputExcel") + fileName + ".xlsx");
 		int rowcount = 1;
 		ArrayList ignoreColNo = new ArrayList();
-		XSSFWorkbook workBook = new XSSFWorkbook(fileInStream);// Open the xlsx and get the requested sheet from the																// workbook
+		XSSFWorkbook workBook = new XSSFWorkbook(fileInStream);// Open the xlsx and get the requested sheet from the //
+																// workbook
 		XSSFSheet s1 = workBook.getSheetAt(0);// Get Sheet from WorkBook
 		StringBuffer csvLine = new StringBuffer();// String buffer to be written in CSV file
 		int rc = s1.getLastRowNum();// Get last row number
+		System.out.println("Last row Number " + rc);
 		// iterating on the rows
 		for (int i = s1.getFirstRowNum(); i < rc; i++) {
 			// checking if the row is null
@@ -196,7 +201,7 @@ public class csvUtils {
 					if (s1.getRow(i).getCell(j) != null) {
 						// temp variable to catch the value of I on which the filled Cell is found
 						int temp = j;
-						// checking if the first header index and last header index is null
+						// checking if the first header index and last header index is null A1 A5
 						if ((s1.getRow(i).getCell(j)) != null
 								&& (s1.getRow(i).getCell(j + (numberOfCOlumns - 1))) != null) {
 							// Checking first header and last header is numeric
@@ -359,16 +364,19 @@ public class csvUtils {
 			dataRow2 = CSVFile2.readLine(); // Read next line of data.
 		}
 		CSVFile2.close();
+		System.out.println("al1" + al1);
+		System.out.println("al2" + al2);
 		boolean tableFlag = false;
 		double var = 0;
 		// Looping on the first list
-		System.out.println("al1 list "+al1);
+		System.out.println("al1 list " + al1);
 		int testing = 0;
 		int x = 1;
+
 		for (int i = 0; i < al1.size();) {
 			// Looping on the number of tables
 			System.out.println("noOfTables: " + noOfTables);
-			while(x <= noOfTables) {
+			while (x <= noOfTables) {
 				System.out.println("noOfTablesxxxxxx: " + x);
 				// tempcount get the column count on the basis of table
 				int tempColCount = tablecolumnCount(x, 1);
@@ -398,8 +406,8 @@ public class csvUtils {
 				} else {
 					// Variance Calculater is used to return the variance value as per the column of
 					// the table
-					
-					//int ab = i%tempColCount;
+
+					// int ab = i%tempColCount;
 					var = varianceCalculator(tempColCount, testing, x, missingValuesMap);
 					testing++;
 					// Comparison is done with the tolerance value on the Yes flag
@@ -428,7 +436,7 @@ public class csvUtils {
 						x++;
 						System.out.println("Am I coming here or not x : " + x);
 						writer.append("\n");
-						
+
 					}
 				} else {
 					break;
@@ -625,6 +633,134 @@ public class csvUtils {
 		 * } catch (IOException e) { System.out.println(e); }
 		 */
 	}
+	// Reading the final comparison report
+
+	public static void readAndCompareCompReportWithTemplate() throws FileNotFoundException, IOException {
+		String finalExcelFolderPath = GeneralUtils.getEnvironment("finalExcelFolderPath");
+		String finalOutputExcelFile = GeneralUtils.getEnvironment("finalOutputExcelFile");
+//		String path = GeneralUtils.getEnvironment("folderPathforInputExcel");
+		FileInputStream fileInStream = new FileInputStream(
+				"C:\\Users\\703224653\\git\\MacquirePOC\\Reports\\ComparisonReport_11-03-2021_02-25-13.xlsx");
+		XSSFWorkbook workBook = new XSSFWorkbook(fileInStream);// Open the xlsx and get the requested sheet from the //
+																// workbook
+		XSSFSheet outputSheet = workBook.getSheetAt(1);
+		HashMap<Integer,ArrayList> hs=new HashMap<Integer,ArrayList>();
+		
+		ArrayList arr = new ArrayList();
+		arr.add("A1");
+		arr.add("A2");
+		arr.add("A3");
+		arr.add("A4");
+		arr.add("A5");
+		hs.put(1, arr);
+
+//		String tempExcelFolderPath = GeneralUtils.getEnvironment("folderPathforInputExcel");
+//		String tempInputExcelFile = GeneralUtils.getEnvironment("inputExcelTemplate");
+////		String temppath = GeneralUtils.getEnvironment("folderPathforInputExcel");
+//		FileInputStream tempfileInStream = new FileInputStream(
+//				GeneralUtils.getEnvironment(tempExcelFolderPath + tempInputExcelFile + ".xlsx"));
+//		XSSFWorkbook workBook1 = new XSSFWorkbook(tempfileInStream);// Open the xlsx and get the requested sheet from the																// workbook
+//		XSSFSheet inputSheet = workBook.getSheetAt(0);
+		int rc = outputSheet.getLastRowNum();// Get last row number
+		System.out.println("Last row Number " + rc);
+		// iterating on the rows
+		for (int i = outputSheet.getFirstRowNum(); i < rc; i++) {
+			System.out.println("I am on row ");
+			// checking if the row is null
+			if (outputSheet.getRow(i) != null) {
+				// getting the last cell number of the row
+				int cc = outputSheet.getRow(i).getLastCellNum();
+				// iterating over the cells
+				for (int j = 0; j < cc; j++) {
+					System.out.println("I am on Cells ");
+					// checking if the cell is null
+					if (outputSheet.getRow(i).getCell(j) != null) {
+						// temp variable to catch the value of I on which the filled Cell is found
+						int temp = j;
+						// checking if the first header index and last header index is null A1 A5
+						if ((outputSheet.getRow(i).getCell(j)) != null
+								&& (outputSheet.getRow(i).getCell(j + (4 - 1))) != null) {
+							// Checking first header and last header is numeric
+							if (outputSheet.getRow(i).getCell(j)
+									.getCellType() == outputSheet.getRow(i).getCell(j).getCellType().NUMERIC) {
+							} else {
+								// checking the cell type is numeric
+								if ((outputSheet.getRow(i).getCell(j)
+										.getCellType() == outputSheet.getRow(i).getCell(j).getCellType().NUMERIC)
+										|| (outputSheet.getRow(i).getCell(j + (4 - 1)).getCellType() == outputSheet
+												.getRow(i).getCell(j + (4 - 1)).getCellType().NUMERIC)) {
+								}
+								// checking if the A1 and A5 are found
+								else if (((outputSheet.getRow(i).getCell(j).getStringCellValue()).equals("A1"))
+										&& ((outputSheet.getRow(i).getCell(j + (4 - 1)).getStringCellValue())
+												.equals("A5"))) {
+									// if A1 and A5 are found then headers will be will be appended
+									for (int k = 0; k < 4;) {
+										Cell c1 = outputSheet.getRow(i).getCell(j);
+										// checking if the cell is null and contains k
+										if (c1 != null) {
+											// Checking the Cell Type
+											switch (c1.getCellType()) {
+											case STRING:
+												// Checking if the headers are not present in the ignored list are
+												// present in the cell
+												
+												for(int p=0;p<hs.get(1).size();) {
+													if(outputSheet.getRow(i).getCell(j).getStringCellValue().equals(hs.get(1).get(p))) {
+														
+													}else {
+														p++;
+													}
+												}
+												if(hs.get(1).contains(outputSheet.getRow(i).getCell(j).getStringCellValue())) {
+													System.out.println("Contains value"
+															+ outputSheet.getRow(i).getCell(j).getStringCellValue());
+												}
+//												if (arr.equals(outputSheet.getRow(i).getCell(j).getStringCellValue())) {
+//													System.out.println("Contains value"
+//															+ outputSheet.getRow(i).getCell(j).getStringCellValue());
+//												}
+									
+
+												break;
+											case NUMERIC:
+												// Control coming to Numeric if the cell type is numeric
+												break;
+											case BOOLEAN:
+
+												break;
+											case _NONE:
+												break;
+
+											case BLANK:
+												break;
+
+											default:
+												break;
+											}
+										} else {
+
+										}
+										k++;
+										j++;
+//										if (k % numberOfCOlumns == 0 && rowcount != numberOfRows) {
+//											rowcount++;
+//											k = 0;
+//											j = temp;
+//											i++;
+//										}
+									}
+									break;
+								}
+
+							}
+						}
+					}
+				}
+			}
+		}
+
+	}
 
 	// Setting the property in the env file to genrate the summar report
 	public static void valueSetterPropertyFile(String key, String Value) throws IOException {
@@ -724,11 +860,11 @@ public class csvUtils {
 	// calculate the variance of for the column
 	private static String calculateWRTVariance(double itemList1, double itemList2, double var) {
 		String result = "";
-		System.out.println("itemList1"+itemList1);
-		System.out.println("itemList2"+itemList2);
-		System.out.println("var"+var);
+		System.out.println("itemList1" + itemList1);
+		System.out.println("itemList2" + itemList2);
+		System.out.println("var" + var);
 		if (itemList1 < itemList2) {
-			if (itemList2-itemList1 <=var ) {
+			if (itemList2 - itemList1 <= var) {
 				result = "Pass with Variance: " + var;
 			} else {
 				result = "Fail";
@@ -747,7 +883,7 @@ public class csvUtils {
 	private static double varianceCalculator(int tableColumnCount, int iloop, int tableNumber,
 			HashMap<Integer, ArrayList> missingValuesMap) throws IOException {
 		// Variance variable to return the variance as per the column
-		System.out.println("i value in variance method"+iloop);
+		System.out.println("i value in variance method" + iloop);
 		double VarianceCol1 = 0;
 		double VarianceCol2 = 0;
 		double VarianceCol3 = 0;
@@ -757,29 +893,45 @@ public class csvUtils {
 		// switch based on the no of table column count
 		switch (tableColumnCount) {
 		case 1:
-			VarianceCol1 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(0)).toString()));
+			VarianceCol1 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(0)).toString()));
 			break;
 		case 2:
-			VarianceCol1 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(0)).toString()));
-			VarianceCol2 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(1)).toString()));
+			VarianceCol1 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(0)).toString()));
+			VarianceCol2 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(1)).toString()));
 			break;
 		case 3:
-			VarianceCol1 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(0)).toString()));
-			VarianceCol2 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(1)).toString()));
-			VarianceCol3 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(2)).toString()));
+			VarianceCol1 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(0)).toString()));
+			VarianceCol2 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(1)).toString()));
+			VarianceCol3 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(2)).toString()));
 			break;
-		case 4:	
-			VarianceCol1 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(0)).toString()));
-			VarianceCol2 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(1)).toString()));
-			VarianceCol3 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(2)).toString()));
-			VarianceCol4 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(3)).toString()));
+		case 4:
+			VarianceCol1 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(0)).toString()));
+			VarianceCol2 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(1)).toString()));
+			VarianceCol3 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(2)).toString()));
+			VarianceCol4 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(3)).toString()));
 			break;
 		case 5:
-			VarianceCol1 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(0)).toString()));
-			VarianceCol2 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(1)).toString()));
-			VarianceCol3 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(2)).toString()));
-			VarianceCol4 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(3)).toString()));	
-			VarianceCol5 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"+((missingValuesMap.get(tableNumber)).get(4)).toString()));			break;
+			VarianceCol1 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(0)).toString()));
+			VarianceCol2 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(1)).toString()));
+			VarianceCol3 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(2)).toString()));
+			VarianceCol4 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(3)).toString()));
+			VarianceCol5 = Integer.parseInt(GeneralUtils.getProperty("tolranceValueTable" + tableNumber + "Col"
+					+ ((missingValuesMap.get(tableNumber)).get(4)).toString()));
+			break;
 		}
 
 		double variance = 0;

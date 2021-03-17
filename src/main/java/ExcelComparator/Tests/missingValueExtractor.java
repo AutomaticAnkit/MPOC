@@ -82,9 +82,10 @@ public class missingValueExtractor extends csvUtils {
 	
 
 
-	//This method is used for returning the list of the missing header in between Prod and UAT.
+	//This method is used for returning the list of the Common header in between Prod and UAT.
 	public static ArrayList headerCompare(String fileName, int nc, String fh, String lh, int tableNo)throws IOException {		
 		ArrayList tempColHeader = new ArrayList();
+		ArrayList fullColHeader = new ArrayList();
 		if(fileName.equalsIgnoreCase("ProdData"))
 		{
 			if(tableNo == 1)
@@ -101,6 +102,9 @@ public class missingValueExtractor extends csvUtils {
 		else
 		{
 			tempColHeader = getColHeader(fileName, nc, fh, lh);
+			fullColHeader=getColHeader(fileName, nc, fh, lh);			
+			completeValuesMap.put(tableNo, fullColHeader);
+			System.out.println("completeValuesMap----------->"+completeValuesMap);
 			ArrayList tempData = new ArrayList();
 			ArrayList tempDataList = new ArrayList();
 			tempData =  getColHeader(fileName, nc, fh, lh);
@@ -156,7 +160,9 @@ public class missingValueExtractor extends csvUtils {
 				tempColHeader.removeAll(prodColHeaderT5);
 			}			
 			missingValuesMap.put(tableNo, tempDataList);
+			
 			System.out.println("missingValuesMap : " + missingValuesMap);
+			
 		}
 		return tempColHeader;
 	}

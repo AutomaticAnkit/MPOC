@@ -1,0 +1,5 @@
+14:06:08.843 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Validated the Structure of the table for ProdData
+14:06:09.428 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Validated the Structure of table for Template
+14:07:18.934 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Comparison between ProdData.xlsx & Template.xlsx has been iniated.
+14:07:20.244 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Validated the Structure of the table for ProdData
+14:07:20.885 [main] INFO  ExcelComparator.Runner.ExcelcsvComp - Validated the Structure of table for Template
