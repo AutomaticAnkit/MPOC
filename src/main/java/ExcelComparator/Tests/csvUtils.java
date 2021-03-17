@@ -53,6 +53,7 @@ public class csvUtils {
 	public static StringBuffer finalData = new StringBuffer();
 	protected static ArrayList missingColm = new ArrayList();
 	static ArrayList localmissingColm = new ArrayList();
+	static ArrayList localmissingRow = new ArrayList();
 	protected static HashMap<Integer, ArrayList> missingValuesMap = new HashMap<Integer, ArrayList>();
 	protected static HashMap<Integer, ArrayList> completeValuesMap = new HashMap<Integer, ArrayList>();
 	static String end = getDate() + "_" + getTime();
@@ -131,14 +132,17 @@ public class csvUtils {
 			String[] lColumn = (GeneralUtils.getProperty("LastColumnHeaderTable" + i)).split(",");
 			String[] rowCount = (GeneralUtils.getProperty("noOfRowsInTable" + i)).split(",");
 			String[] colCount = (GeneralUtils.getProperty("noOfColumnsInTable" + i)).split(",");
+			String[] frow=(GeneralUtils.getProperty("firstRowHeaderTable" + i)).split(",");
+			String[] lrow=(GeneralUtils.getProperty("lastRowHeaderTable" + i)).split(",");
+			
 			// File no is 1 for prod and 2 for template
 			if (fileNo == 1) {
 				// Below Method generates on the basis of first column header and Last column
 				// header.
-				masterCSVGenrator(fileName, fColumn[0], lColumn[0], Integer.parseInt(colCount[0]),
+				masterCSVGenrator(fileName, fColumn[0], lColumn[0],frow[0],lrow[0],Integer.parseInt(colCount[0]),
 						Integer.parseInt(rowCount[0]), i);
 			} else {
-				masterCSVGenrator(fileName, fColumn[1], lColumn[1], Integer.parseInt(colCount[1]),
+				masterCSVGenrator(fileName, fColumn[1], lColumn[1],frow[1],lrow[1], Integer.parseInt(colCount[1]),
 						Integer.parseInt(rowCount[1]), i);
 			}
 		}
@@ -146,15 +150,20 @@ public class csvUtils {
 
 	// This method generates the CSV for the Excel on the basis of first header last
 	// header , No of column and no of rows.
-	public static void masterCSVGenrator(String fileName, String fh, String lh, int nc, int nr, int tableNo)
+	public static void masterCSVGenrator(String fileName, String fh, String lh,String fr,String lr, int nc, int nr, int tableNo)
 			throws IOException {
 		missingValue = new missingValueExtractor();
 		String inputExcelFileName = fileName;
 		missingColm = missingValue.headerCompare(fileName, nc, fh, lh, tableNo);
 		localmissingColm = missingValue.headerCompare(fileName, nc, fh, lh, tableNo);
+		if (GeneralUtils.getEnvironment("runWithRowVal").equals("Yes")) {
+			localmissingRow=missingValue.rowCompare(fileName, nr, fr, lr, tableNo);
+			}
 		System.out.println("missingColm : " + missingColm);
+		System.out.println("localmissingColm : " + localmissingColm);
+		System.out.println("localmissingRow : " + localmissingRow);
 		// String buffer table 1 gets the values of table appended by ","
-		StringBuffer table1 = tabletoStringGenrator(fileName, fh, lh, nc, nr, localmissingColm);
+		StringBuffer table1 = tabletoStringGenrator(fileName, fh, lh, nc, nr, localmissingColm,localmissingRow);
 		// missingValuesMap.put(tableNo, missingColm);
 		System.out.println("missingValuesMap" + missingValuesMap);
 		System.out.println("PFB, the table data from table.");
@@ -174,7 +183,7 @@ public class csvUtils {
 	// This method genrates the table data to a string array on the basis of First ,
 	// last and no of rows& columns.
 	public static StringBuffer tabletoStringGenrator(String fileName, String firstHeader, String lastHeader,
-			int numberOfCOlumns, int numberOfRows, ArrayList listOfIgnoreCols) throws IOException {
+			int numberOfCOlumns, int numberOfRows, ArrayList listOfIgnoreCols,ArrayList listofIgnoreRows) throws IOException {
 		// listOfIgnoreCols contains the values are that needs to be ignored while CSV
 		// generation.
 		// Values which are not present in prod and present in template will be ignored.
@@ -233,9 +242,9 @@ public class csvUtils {
 													// checking if the headers to be ignored is more than 0 and the
 													// header present in the ignored list and the header in the cell is
 													// equal
-													if (listOfIgnoreCols.size() > 0 && (listOfIgnoreCols.contains(
-															(s1.getRow(i).getCell(j).getStringCellValue())))) {
-
+													if ((listOfIgnoreCols.size() > 0 && (listOfIgnoreCols.contains(s1.getRow(i).getCell(j).getStringCellValue()))) &&
+															(listofIgnoreRows.size() > 0 && (listofIgnoreRows.contains(s1.getRow(i).getCell(j).getStringCellValue()))))
+														{
 														if (k == 0)
 															ignoreColNo.add(200);
 														else if (k == 1)

@@ -6,8 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -40,22 +42,22 @@ public class missingValueExtractor extends csvUtils {
 	public static void main(String[] args) throws IOException {
 	
 	}
-	
-	public static ArrayList rowCompare(String fileName, int nr, String fr, String lr, int tableNo)throws IOException {
+public static ArrayList rowCompare(String fileName, int nr, String fr, String lr, int tableNo)throws IOException {
 		
 		ArrayList tempRowHeader = new ArrayList();
-		if(fileName.equalsIgnoreCase(getValFromEnvPropFile("inputExcelFileName")))
+		System.out.println(tableNo);
+	if(fileName.equalsIgnoreCase(getValFromEnvPropFile("inputExcelFileName")))
 		{
 			if(tableNo == 1)
-				prodColHeaderT1 = getColHeader(fileName, nr, fr, lr);
+				prodRowHeaderT1 = getRowHeader(fileName, nr, fr, lr);
 			else if(tableNo == 2)
-				prodColHeaderT2 = getColHeader(fileName,nr, fr, lr);
+				prodRowHeaderT2 = getRowHeader(fileName,nr, fr, lr);
 			else if(tableNo == 3)
-				prodColHeaderT3 = getColHeader(fileName, nr, fr, lr);
+				prodRowHeaderT3 = getRowHeader(fileName, nr, fr, lr);
 			else if(tableNo == 4)
-				prodColHeaderT4 = getColHeader(fileName, nr, fr, lr);
+				prodRowHeaderT4 = getRowHeader(fileName, nr, fr, lr);
 			else if(tableNo == 5)
-				prodColHeaderT5 = getColHeader(fileName,nr, fr, lr);
+				prodRowHeaderT5 = getRowHeader(fileName,nr, fr, lr);
 		}
 		else
 		{
@@ -65,27 +67,26 @@ public class missingValueExtractor extends csvUtils {
 			 * test2.put(1, "GG"); System.out.println(test1.re);
 			 */
 			
-			tempRowHeader = getColHeader(fileName, nr, fr, lr);			
+			tempRowHeader = getRowHeader(fileName, nr, fr, lr);			
 			if(tableNo == 1)
-				tempRowHeader.removeAll(prodColHeaderT1);
+				tempRowHeader.removeAll(prodRowHeaderT1);
 			else if(tableNo == 2)
-				tempRowHeader.removeAll(prodColHeaderT2);
+				tempRowHeader.removeAll(prodRowHeaderT2);
 			else if(tableNo == 3)
-				tempRowHeader.removeAll(prodColHeaderT3);
+				tempRowHeader.removeAll(prodRowHeaderT3);
 			else if(tableNo == 4)
-				tempRowHeader.removeAll(prodColHeaderT4);
+				tempRowHeader.removeAll(prodRowHeaderT4);
 			else if(tableNo == 5)
-				tempRowHeader.removeAll(prodColHeaderT5);
+				tempRowHeader.removeAll(prodRowHeaderT5);
 		}
 		return tempRowHeader;
 	}
 	
 
 
-	//This method is used for returning the list of the Common header in between Prod and UAT.
+	//This method is used for returning the list of the missing header in between Prod and UAT.
 	public static ArrayList headerCompare(String fileName, int nc, String fh, String lh, int tableNo)throws IOException {		
 		ArrayList tempColHeader = new ArrayList();
-		ArrayList fullColHeader = new ArrayList();
 		if(fileName.equalsIgnoreCase("ProdData"))
 		{
 			if(tableNo == 1)
@@ -102,9 +103,6 @@ public class missingValueExtractor extends csvUtils {
 		else
 		{
 			tempColHeader = getColHeader(fileName, nc, fh, lh);
-			fullColHeader=getColHeader(fileName, nc, fh, lh);			
-			completeValuesMap.put(tableNo, fullColHeader);
-			System.out.println("completeValuesMap----------->"+completeValuesMap);
 			ArrayList tempData = new ArrayList();
 			ArrayList tempDataList = new ArrayList();
 			tempData =  getColHeader(fileName, nc, fh, lh);
@@ -160,18 +158,16 @@ public class missingValueExtractor extends csvUtils {
 				tempColHeader.removeAll(prodColHeaderT5);
 			}			
 			missingValuesMap.put(tableNo, tempDataList);
-			
-			System.out.println("missingValuesMap : " + missingValuesMap);
-			
+			System.out.println("missingValuesMap.put(tableNo, tempData.indexOf(tempColHeader));: " + missingValuesMap );
 		}
 		return tempColHeader;
 	}
 	
 	//This method is used to extract the header with respect to Column count , First and last header of the table.
 	public static ArrayList getColHeader( String fileName,int colCount , String firstHeader , String lastHeader) throws IOException{
-		
 		ArrayList ClmHdrsPrd = new ArrayList();
-		String path= "C:\\Users\\703224653\\git\\MacquirePOC\\Test Data\\";
+		//String path= "C:\\Users\\703224653\\git\\MacquirePOC\\Test Data\\";
+		String path="C:\\Users\\HP\\git1\\MacquirePOC\\Test Data\\";
 		// TODO Auto-generated method stub
 		try {
 		FileInputStream fis=new FileInputStream(path+fileName+".xlsx");
@@ -191,6 +187,7 @@ public class missingValueExtractor extends csvUtils {
 					}
 					else if(cell.getStringCellValue().equals(firstHeader)) 
 					{
+						//System.out.println("Test"+s.getRow(i).getCell(j+(colCount-1)).getStringCellValue().equalsIgnoreCase(lastHeader));
 						if(s.getRow(i).getCell(j+(colCount-1)).getStringCellValue().equalsIgnoreCase(lastHeader))
 						{
 							for(int k=j;k<colCount+j;k++) {
@@ -209,5 +206,77 @@ public class missingValueExtractor extends csvUtils {
 		return ClmHdrsPrd;
 
 	}
+
+
+	//This method is used to extract the header with respect to row count , First and last header of the table.
+	public static ArrayList getRowHeader( String fileName,int rowCount , String firstRowHeader , String lastRowHeader) throws IOException{
+		
+		ArrayList rowHdrsPrd = new ArrayList();
+		//String path= "C:\\Users\\703224653\\git\\MacquirePOC\\Test Data\\";
+		String path="C:\\Users\\HP\\git1\\MacquirePOC\\Test Data\\";
+		// TODO Auto-generated method stub
+		try { 
+		FileInputStream fis=new FileInputStream(path+fileName+".xlsx");
+		XSSFWorkbook wb=new XSSFWorkbook(fis);
+		ArrayList<String> al1= new ArrayList<>();
+		XSSFSheet s=wb.getSheetAt(0);		
+		int noOfRows=s.getLastRowNum();
+		int columnindex=0;
+		int rowindex=0;
+		int lastrowindex=0;
+		Iterator<Row> itr = s.iterator();    //iterating over excel file  
+		while (itr.hasNext())                 
+		{  
+		Row row = itr.next();  
+		Iterator<Cell> cellIterator = row.cellIterator();   //iterating over each column  
+		while (cellIterator.hasNext())   
+		{  
+		Cell cell = cellIterator.next();  
+		if(cell.getCellType()==cell.getCellType().NUMERIC) 
+		{
+		}
+		else if(cell.getStringCellValue().equals(firstRowHeader))
+		{
+			columnindex=cell.getColumnIndex();
+			rowindex=cell.getRowIndex();
+		
+		}else if(cell.getStringCellValue().equals(lastRowHeader))
+		{
+			lastrowindex=cell.getRowIndex();
+		}
+		}
+		}
+		 				
+		System.out.println("col ind"+columnindex);
+		System.out.println("row ind"+rowindex);
+		System.out.println("the row count in getrowheader"+rowCount);
+		System.out.println("row header"+firstRowHeader);
+		System.out.println("last header"+lastRowHeader);
+		
+		for(int i=rowindex;i<=lastrowindex;i++) {
+			if(s.getRow(i) != null) {
+				Cell cell=s.getRow(i).getCell(columnindex);
+				if(cell != null) {
+					
+					if(cell.getCellType()==cell.getCellType().NUMERIC) 
+					{
+					}
+					else
+					{
+						System.out.println("the cell values"+cell.getStringCellValue());
+						rowHdrsPrd.add(cell.getStringCellValue());
+					}
+
+			}
+		}
+	}
+		}catch (IOException e) {
+	      System.out.println(e);
+	    }
+		return rowHdrsPrd;
+
+	}
+
+	
 
 }
